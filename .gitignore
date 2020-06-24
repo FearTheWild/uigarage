@@ -17,7 +17,6 @@
 
 # misc
 .DS_Store
-client-config.js
 
 # debug
 npm-debug.log*

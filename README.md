@@ -12,8 +12,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Installing 🔧
 - Clone this repo
-- cd uigarage-app
+- cd uigarage
 - npm install
+- yarn dev
 
 ## Configuration 🔧
 - Rename `client-config-example.js` to `client-config.js` and replace the `xxxxx` with your own details.

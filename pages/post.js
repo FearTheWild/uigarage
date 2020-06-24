@@ -10,12 +10,12 @@ const Post = withRouter(props => {
   return (
     <Layout>
       {post ? (
-        <div className="container">
-          <div className="post">
-            <div className="media">
-              <img src={post.featuredImage.sourceUrl} alt={post.title} />
+        <div className="container mx-auto py-8">
+          <div className="w-full md:w-1/2 mx-auto">
+            <div className="block mb-6">
+              <img className="w-full m-0" src={post.featuredImage.sourceUrl} alt={post.title} />
             </div>
-            <h2>{post.title}</h2>
+            <h2 className="text-ui-dark">{post.title}</h2>
           </div>
         </div>
       ) : (

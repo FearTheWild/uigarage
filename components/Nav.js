@@ -5,23 +5,23 @@ const Nav = () => {
   const [show, setDisplay] = useState(false);
 
   return (
-    <nav className="site-nav">
-      <div className="container">
-        <div className="site-logo">
+    <nav className="bg-ui-dark p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <div className="block w-auto">
           <Link href="/">
-            <a className="">UIGarage</a>
+            <a className=""><img src="/img/UIGarage-Logo.svg" alt="UIGarage" width="145" height="32" /></a>
           </Link>
         </div>
 
-        <div className={`site-menu ${show ? "show" : ""}`} id="">
-          <ul>
-            <li className="site-menu_item">
+        <div className={`w-auto ${show ? "show" : ""}`} id="">
+          <ul className="flex items-center justify-end text-right">
+            <li className="">
               <Link href="/categories">
-                <a className="nav-link">Categories</a>
+                <a className="text-base text-grey-500 hover:text-white">Categories</a>
               </Link>
             </li>
-            <li className="site-menu_item">
-              <a className="nav-link" href="#">
+            <li className="ml-5">
+              <a className="text-base text-grey-500 hover:text-white" href="#">
                 My Account
               </a>
             </li>

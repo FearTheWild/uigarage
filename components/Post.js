@@ -5,12 +5,12 @@ const Post = props => {
   const { post } = props;
 
   return undefined !== post ? (
-    <div className="grid-item" key={post.postId}>
+    <div className="w-1/2 md:w-1/4 lg:w-1/5 px-3 pb-8" key={post.postId}>
       <Link
         as={`/post/${post.slug}-${post.postId}`}
         href={`/post?slug=${post.slug}-${post.postId}`}
       >
-        <a>
+        <a className="block mb-2">
           <img src={post.featuredImage.sourceUrl} alt={post.title} />
         </a>
       </Link>
@@ -18,7 +18,7 @@ const Post = props => {
         as={`/post/${post.slug}-${post.postId}`}
         href={`/post?slug=${post.slug}-${post.postId}`}
       >
-        <a>{post.title}</a>
+        <a className="text-base font-bold text-grey-400 hover:text-ui-dark">{post.title}</a>
       </Link>
     </div>
   ) : (
