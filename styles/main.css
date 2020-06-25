@@ -1,8 +1,39 @@
 @tailwind base;
 @tailwind components;
-
 body {
   @apply bg-grey-100;
+}
+
+.load-more span {
+  font-size: 18px;
+  color: #656477;
+  cursor: pointer;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  font-family: "Roboto", sans-serif;
+}
+
+.load-more span:hover {
+  font-size: 19px;
+}
+
+.load-initial {
+  width: 100%;
+  height: calc(100vh - 225px);
+}
+
+.load-initial .load-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.load-more .load-icon {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 @tailwind utilities;
