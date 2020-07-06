@@ -44,7 +44,7 @@ const Post = withRouter((props) => {
             <div className="block mb-6">
               <img
                 className="w-full m-0"
-                src={post.featuredImage.sourceUrl}
+                src={post.featuredImage? post.featuredImage.sourceUrl: ``}
                 alt={post.title}
               />
             </div>
