@@ -1,4 +1,5 @@
 import '../styles/main.css';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 // import "../style.scss";
 import client from "../components/ApolloClient";
 import { ApolloProvider } from "react-apollo";

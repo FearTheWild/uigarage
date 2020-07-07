@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
-import Layout from "../components/Layout";
+import Layout from "../../components/Layout";
 import { withRouter } from "next/router";
-import client from "../components/ApolloClient";
+import client from "../../components/ApolloClient";
 import { useQuery } from "@apollo/react-hooks";
 import ReactLoading from "react-loading";
+import moment from "moment";
 
-import POST_BY_ID_QUERY from "../queries/post-by-id";
+import POST_BY_ID_QUERY from "../../queries/post-by-id";
 
 const Post = withRouter((props) => {
   const [post, setPost] = useState("");
   let {
     router: {
-      query: { slug },
+      query: { pid },
     },
   } = props;
-  const id = slug ? parseInt(slug.split("-").pop()) : context.query.id;
+  const id = pid ? parseInt(pid.split("-").pop()) : '';
   const { loading, error, data } = useQuery(POST_BY_ID_QUERY, {
     variables: { id },
   });
@@ -22,6 +23,7 @@ const Post = withRouter((props) => {
   useEffect(() => {
     const onCompleted = (data) => {
       let post = data.post;
+      console.log("this is post data post", post)
       setPost(post);
     };
     const onError = (error) => {
@@ -44,24 +46,35 @@ const Post = withRouter((props) => {
             <div className="block mb-6">
               <img
                 className="w-full m-0"
-                src={post.featuredImage? post.featuredImage.sourceUrl: ``}
+                src={post.featuredImage ? post.featuredImage.sourceUrl : ``}
                 alt={post.title}
               />
             </div>
-            <h2 className="text-ui-dark">{post.title}</h2>
+            <div className="description">
+              <br></br>
+              <h2 className="text-ui-dark"><b>{post.title}</b></h2>
+              <h5>Published: {moment(post.date).format('ll')}</h5>
+              <br></br>
+              <h4><b>Categories:</b>
+                {post.categories.nodes.length
+                  ? post.categories.nodes.map((category) => <a href="#">{category.name}</a>)
+                  : ""
+                }
+              </h4>
+            </div>
           </div>
         </div>
       ) : (
-        <div className="load-initial">
-          <ReactLoading
-            className="load-icon"
-            type="spinningBubbles"
-            color="#333333"
-            height="60px"
-            width="60px"
-          />
-        </div>
-      )}
+          <div className="load-initial">
+            <ReactLoading
+              className="load-icon"
+              type="spinningBubbles"
+              color="#333333"
+              height="60px"
+              width="60px"
+            />
+          </div>
+        )}
     </Layout>
   );
 });

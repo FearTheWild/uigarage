@@ -36,4 +36,27 @@ body {
   transform: translate(-50%);
 }
 
+.description h2 {
+  font-size: x-large;
+}
+
+.description h5 {
+  color: grey;
+}
+
+.description h4 {
+  font-size: large;
+}
+
+.description a {
+  padding-left: 8px;
+  color: grey;
+}
+
+.description a:hover,
+.description a:active {
+  text-decoration: underline;
+  color: black;
+}
+
 @tailwind utilities;
