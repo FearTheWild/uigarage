@@ -7,6 +7,12 @@ const POST_BY_ID_QUERY = gql`
       postId
       title
       slug
+      date
+    	categories {
+      	nodes {
+          name
+        }
+    	}
       featuredImage {
         id
         uri
