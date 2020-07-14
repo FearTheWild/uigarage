@@ -1,42 +1,46 @@
-import { useState, useEffect } from "react";
-import Layout from "../../components/Layout";
-import { withRouter } from "next/router";
-import client from "../../components/ApolloClient";
-import { useQuery } from "@apollo/react-hooks";
-import ReactLoading from "react-loading";
-import moment from "moment";
+/* eslint-disable react/react-in-jsx-scope */
+import { useState, useEffect } from 'react'
+import { withRouter } from 'next/router'
+import ReactLoading from 'react-loading'
+import moment from 'moment'
 
-import POST_BY_ID_QUERY from "../../queries/post-by-id";
+import { initializeApollo } from '../../components/ApolloClient'
+import Layout from '../../components/Layout'
 
-const Post = withRouter((props) => {
-  const [post, setPost] = useState("");
-  let {
-    router: {
-      query: { pid },
-    },
-  } = props;
-  const id = pid ? parseInt(pid.split("-").pop()) : '';
-  const { loading, error, data } = useQuery(POST_BY_ID_QUERY, {
-    variables: { id },
-  });
+import CACHEDNUM_QUERY from '../../queries/cached-num'
+import POSTS_QUERY from '../../queries/posts'
+
+// eslint-disable-next-line react/prop-types
+function Post ({ router }) {
+  const apolloClient = initializeApollo()
+  const [pid, setPid] = useState()
+  const [post, setPost] = useState()
 
   useEffect(() => {
-    const onCompleted = (data) => {
-      let post = data.post;
-      console.log("this is post data post", post)
-      setPost(post);
-    };
-    const onError = (error) => {
-      return <div>{error}</div>;
-    };
-    if (onCompleted || onError) {
-      if (onCompleted && !loading && !error) {
-        onCompleted(data);
-      } else if (onError && !loading && error) {
-        onError(error);
-      }
+    // eslint-disable-next-line react/prop-types
+    if (router.query && router.query.pid) {
+      // eslint-disable-next-line react/prop-types
+      const postId = parseInt(router.query.pid.split('-').pop())
+      setPid(postId)
     }
-  }, [data]);
+  })
+
+  useEffect(() => {
+    setTimeout(() => {
+      const cachedLoadNum = apolloClient.readQuery({ query: CACHEDNUM_QUERY })
+      const posts = apolloClient.readQuery({
+        query: POSTS_QUERY,
+        variables: {
+          id: cachedLoadNum.loadNum
+        }
+      })
+      posts.posts.nodes.map((postItem) => {
+        if (postItem.postId === pid) {
+          setPost(postItem)
+        }
+      })
+    }, 100)
+  }, [pid])
 
   return (
     <Layout>
@@ -46,7 +50,7 @@ const Post = withRouter((props) => {
             <div className="block mb-6">
               <img
                 className="w-full m-0"
-                src={post.featuredImage ? post.featuredImage.sourceUrl : ``}
+                src={post.featuredImage ? post.featuredImage.sourceUrl : ''}
                 alt={post.title}
               />
             </div>
@@ -57,26 +61,26 @@ const Post = withRouter((props) => {
               <br></br>
               <h4><b>Categories:</b>
                 {post.categories.nodes.length
-                  ? post.categories.nodes.map((category) => <a href="#">{category.name}</a>)
-                  : ""
+                  ? post.categories.nodes.map((category, id) => <a href="#" key={id}>{category.name}</a>)
+                  : ''
                 }
               </h4>
             </div>
           </div>
         </div>
       ) : (
-          <div className="load-initial">
-            <ReactLoading
-              className="load-icon"
-              type="spinningBubbles"
-              color="#333333"
-              height="60px"
-              width="60px"
-            />
-          </div>
-        )}
+        <div className="load-initial">
+          <ReactLoading
+            className="load-icon"
+            type="spinningBubbles"
+            color="#333333"
+            height="60px"
+            width="60px"
+          />
+        </div>
+      )}
     </Layout>
-  );
-});
+  )
+}
 
-export default Post;
+export default withRouter(Post)

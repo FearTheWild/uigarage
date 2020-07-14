@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind components;
+@tailwind utilities;
 body {
   @apply bg-grey-100;
 }
@@ -59,4 +60,7 @@ body {
   color: black;
 }
 
-@tailwind utilities;
+.posts-container {
+  min-height: 100vh;
+}
+

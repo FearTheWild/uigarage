@@ -1,4 +1,5 @@
-import gql from "graphql-tag";
+/* eslint-disable no-tabs */
+import gql from 'graphql-tag'
 
 const POST_BY_ID_QUERY = gql`
   query Post($id: ID!) {
@@ -22,6 +23,6 @@ const POST_BY_ID_QUERY = gql`
       }
     }
   }
-`;
+`
 
-export default POST_BY_ID_QUERY;
+export default POST_BY_ID_QUERY

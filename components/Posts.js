@@ -1,84 +1,90 @@
-import { useState, useEffect } from "react";
-import Layout from "./Layout";
-import Post from "./Post";
-import client from "./ApolloClient";
-import { useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import ReactLoading from "react-loading";
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable camelcase */
+import { useState, useEffect } from 'react'
+import { initializeApollo } from './ApolloClient'
+import { useQuery } from '@apollo/react-hooks'
+import ReactLoading from 'react-loading'
 
-const POSTS_QUERY = gql`
-  query Posts($id: Int, $endCursor: String) {
-    posts(first: $id, after: $endCursor) {
-      nodes {
-        title
-        slug
-        postId
-        featuredImage {
-          sourceUrl
-        }
-      }
-      edges {
-        cursor
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
-      }
-    }
-  }
-`;
+import POSTS_QUERY from '../queries/posts'
+import CachedNum_QUERY from '../queries/cached-num'
+
+import Post from './Post'
 
 const Posts = (props) => {
-  const { posts } = props;
-  const loadNum = 15;
-  const [endCursor, setEndCursor] = useState("");
-  const [postsArray, setPostsArray] = useState([]);
-  const [initialLoad, setInitialLoad] = useState(false);
-  const { loading, error, data } = useQuery(POSTS_QUERY, {
-    variables: {
-      id: loadNum,
-      endCursor: endCursor,
-    },
-  });
+  const apolloClient = initializeApollo()
+
+  const [loadNum, setLoadNum] = useState(15)
+  const [postsArray, setPostsArray] = useState([])
+  const [initialLoad, setInitialLoad] = useState(false)
+  const [skipStatus, setSkipStatus] = useState(true)
+  const { loading, error, data } = useQuery(
+    POSTS_QUERY,
+    {
+      variables: {
+        id: loadNum
+      },
+      skip: skipStatus
+      // fetchPolicy: "cache-and-network"
+    }
+  )
+
+  useEffect(() => {
+    setTimeout(() => {
+      try {
+        const cachedLoadNum = apolloClient.readQuery({ query: CachedNum_QUERY })
+        setLoadNum(cachedLoadNum.loadNum)
+      } catch (e) {
+        setLoadNum(15)
+      }
+      setSkipStatus(false)
+    }, 100)
+  }, [])
 
   useEffect(() => {
     const onCompleted = (data) => {
-      let fetchData = data.posts.nodes;
-      setPostsArray([...postsArray, ...fetchData]);
-      setInitialLoad(true);
-    };
-    const onError = (error) => {
-      return <div>{error}</div>;
-    };
-    if (onCompleted || onError) {
-      if (onCompleted && !loading && !error) {
-        onCompleted(data);
-      } else if (onError && !loading && error) {
-        onError(error);
+      if (data && data.posts) {
+        const fetchData = data.posts.nodes
+        setPostsArray([...fetchData])
+        setInitialLoad(true)
+        apolloClient.writeQuery({
+          query: CachedNum_QUERY,
+          data: {
+            loadNum
+          }
+        })
       }
     }
-  }, [data]);
+    const onError = (error) => {
+      return <div>{error}</div>
+    }
+    if (onCompleted || onError) {
+      if (onCompleted && !loading && !error) {
+        onCompleted(data)
+      } else if (onError && !loading && error) {
+        onError(error)
+      }
+    }
+  }, [data])
 
   const handleLoadMore = () => {
-    setEndCursor(data.posts.pageInfo.endCursor);
-  };
+    setLoadNum(loadNum + 15)
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className="container mx-auto py-6">
         <div className="flex flex-wrap">
           Oops, there was an error :( Please try again later.
         </div>
       </div>
-    );
+    )
+  }
   return (
     <div className="container mx-auto py-6">
-      <div className="flex flex-wrap">
+      <div className={initialLoad ? 'flex flex-wrap posts-container' : 'flex flex-wrap'} >
         {postsArray.length
           ? postsArray.map((post) => <Post key={post.postId} post={post} />)
-          : ""}
+          : ''}
       </div>
 
       {!initialLoad ? (
@@ -107,7 +113,7 @@ const Posts = (props) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Posts;
+export default Posts

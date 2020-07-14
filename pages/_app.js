@@ -1,17 +1,17 @@
-import '../styles/main.css';
-import 'react-lazy-load-image-component/src/effects/blur.css';
-// import "../style.scss";
-import client from "../components/ApolloClient";
-import { ApolloProvider } from "react-apollo";
-import { ApolloProvider as ApolloHooksProvider } from "@apollo/react-hooks";
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/prop-types */
+import { useApollo } from '../components/ApolloClient'
+import { ApolloProvider } from 'react-apollo'
+
+import '../styles/main.css'
+import 'react-lazy-load-image-component/src/effects/blur.css'
 
 // This default export is required in a new `pages/_app.js` file.
-export default function MyApp({ Component, pageProps }) {
+export default function MyApp ({ Component, pageProps }) {
+  const client = useApollo(pageProps.initialApolloState)
   return (
     <ApolloProvider client={client}>
-      <ApolloHooksProvider client={client}>
-        <Component {...pageProps} />
-      </ApolloHooksProvider>
+      <Component {...pageProps} />
     </ApolloProvider>
-  );
+  )
 }
