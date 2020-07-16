@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/prop-types */
-import { useApollo } from '../components/ApolloClient'
+import { useApollo } from '../lib/ApolloClient'
 import { ApolloProvider } from 'react-apollo'
 
 import '../styles/main.css'

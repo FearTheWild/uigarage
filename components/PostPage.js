@@ -1,11 +1,11 @@
-import Layout from "./Layout";
-import { withRouter } from "next/router";
-import client from "./ApolloClient";
+/* eslint-disable react/react-in-jsx-scope */
+import { withRouter } from 'next/router'
+import client from '../lib/ApolloClient'
 
-import POST_BY_ID_QUERY from "../queries/post-by-id";
+import POST_BY_ID_QUERY from '../queries/post-by-id'
 
 const PostPage = withRouter(props => {
-  const { post } = props;
+  const { post } = props
 
   return (
     <div>
@@ -19,25 +19,25 @@ const PostPage = withRouter(props => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </div>
-  );
-});
+  )
+})
 
-PostPage.getInitialProps = async function(context) {
-  let {
+PostPage.getInitialProps = async function (context) {
+  const {
     query: { slug }
-  } = context;
-  const id = slug ? parseInt(slug.split("-").pop()) : context.query.id;
+  } = context
+  const id = slug ? parseInt(slug.split('-').pop()) : context.query.id
   const res = await client.query({
     query: POST_BY_ID_QUERY,
     variables: { id }
-  });
+  })
 
   return {
     post: res.data.post
-  };
-};
+  }
+}
 
-export default PostPage;
+export default PostPage

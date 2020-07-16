@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable camelcase */
 import { useState, useEffect } from 'react'
-import { initializeApollo } from './ApolloClient'
+import { initializeApollo } from '../lib/ApolloClient'
 import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
 
