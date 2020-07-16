@@ -15,7 +15,8 @@ const MySelect = dynamic(
 const Filter = (props) => {
   const router = useRouter()
   const [categories, setCategories] = useState()
-  const [postFormats, setPostFormats] = useState()
+  const [colors, setcolors] = useState()
+  const [platforms, setplatforms] = useState()
 
   const { loading, error, data } = useQuery(
     FILTER_QUERY
@@ -23,17 +24,25 @@ const Filter = (props) => {
 
   useEffect(() => {
     const onCompleted = (data) => {
-      if (data && data.categories && data.postFormats) {
+      if (data && data.categories && data.colors && data.platforms) {
+
         const categories_option = [{ value: { uri: '/', id: '' }, label: 'All categories' }]
-        const postFormats_option = [{ value: { uri: '/', id: '' }, label: 'All postFormats' }]
+        const colors_option = [{ value: { uri: '/', id: '' }, label: 'All colors' }]
+        const platforms_option = [{ value: { uri: '/', id: '' }, label: 'All platforms' }]
+
         data.categories.nodes.map((category) => {
           categories_option.push({ value: { uri: category.uri, id: category.id }, label: `${category.name}  (${category.count})` })
         })
-        data.postFormats.nodes.map((postFormat) => {
-          postFormats_option.push({ value: { uri: postFormat.uri, id: postFormat.id }, label: postFormat.name })
+        data.colors.nodes.map((color) => {
+          colors_option.push({ value: { uri: color.uri, id: color.id }, label: color.name })
         })
+        data.platforms.nodes.map((platform) => {
+          platforms_option.push({ value: { uri: platform.uri, id: platform.id }, label: platform.name })
+        })
+
         setCategories(categories_option)
-        setPostFormats(postFormats_option)
+        setcolors(colors_option)
+        setplatforms(platforms_option)
       }
     }
     const onError = (error) => {
@@ -60,8 +69,12 @@ const Filter = (props) => {
           <MySelect options={categories} className="mt-1" onChange={handleChange} placeholder="All categories"/>
         </div>
         <div className="w-1/2 md:w-1/4 lg:w-1/4 fl-item px-3">
-          <span className="text-base">Posts Format</span>
-          <MySelect options={postFormats} className="mt-1" onChange={handleChange} placeholder="All postFormats"/>
+          <span className="text-base">Colors</span>
+          <MySelect options={colors} className="mt-1" onChange={handleChange} placeholder="All colors"/>
+        </div>
+        <div className="w-1/2 md:w-1/4 lg:w-1/4 fl-item px-3">
+          <span className="text-base">Platform</span>
+          <MySelect options={platforms} className="mt-1" onChange={handleChange} placeholder="All platforms"/>
         </div>
       </div>
       <hr></hr>

@@ -9,20 +9,20 @@ import Layout from '../../components/Layout'
 import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
-import POSTFORMAT_QUERY from '../../queries/postFormat'
+import COLOR_QUERY from '../../queries/color'
 
 // eslint-disable-next-line react/prop-types
-function PostFormat ({ router }) {
+function color ({ router }) {
   const [loadNum, setLoadNum] = useState(15)
-  const [postFormatId, setpostFormatId] = useState()
+  const [colorId, setcolorId] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const { loading, error, data } = useQuery(
-    POSTFORMAT_QUERY,
+    COLOR_QUERY,
     {
       variables: {
-        id: postFormatId,
+        id: colorId,
         count: loadNum
       },
       skip: skipStatus
@@ -30,19 +30,19 @@ function PostFormat ({ router }) {
   )
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setpostFormatId(router.query.slug[1])
+      setcolorId(router.query.slug[1])
     }
   })
 
   useEffect(() => {
     setSkipStatus(false)
-  }, [postFormatId])
+  }, [colorId])
 
   useEffect(() => {
     const onCompleted = (data) => {
-      if (data && data.postFormat) {
+      if (data && data.color) {
         setInitialLoad(true)
-        setPostsArray(data.postFormat.posts.nodes)
+        setPostsArray(data.color.posts.nodes)
       }
     }
     const onError = (error) => {
@@ -109,4 +109,4 @@ function PostFormat ({ router }) {
   )
 }
 
-export default withRouter(PostFormat)
+export default withRouter(color)

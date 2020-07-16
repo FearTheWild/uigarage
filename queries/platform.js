@@ -1,9 +1,9 @@
 /* eslint-disable no-tabs */
 import gql from 'graphql-tag'
 
-const POSTFORMAT_QUERY = gql`
-	query postFormat ($id: ID!, $count: Int) {
-		postFormat(id: $id) {
+const PLATFORM_QUERY = gql`
+	query platform ($id: ID!, $count: Int) {
+		platform(id: $id) {
             count
             description
 			link
@@ -35,4 +35,4 @@ const POSTFORMAT_QUERY = gql`
 	}
 `
 
-export default POSTFORMAT_QUERY
+export default PLATFORM_QUERY
