@@ -4,42 +4,44 @@ import { useState, useEffect } from 'react'
 import Router, { withRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
-import moment from 'moment'
 
 import Layout from '../../components/Layout'
+import Post from '../../components/Post'
 
-import POST_BY_ID_QUERY from '../../queries/post-by-id'
+import POSTFORMAT_QUERY from '../../queries/postFormat'
 
 // eslint-disable-next-line react/prop-types
-function Post ({ router }) {
-  const [pid, setPid] = useState()
-  const [post, setPost] = useState()
+function PostFormat ({ router }) {
+  const [loadNum, setLoadNum] = useState(15)
+  const [postFormatId, setpostFormatId] = useState()
+  const [postsArray, setPostsArray] = useState([])
+  const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
-
   const { loading, error, data } = useQuery(
-    POST_BY_ID_QUERY,
+    POSTFORMAT_QUERY,
     {
       variables: {
-        id: pid
+        id: postFormatId,
+        count: loadNum
       },
       skip: skipStatus
     }
   )
   useEffect(() => {
-    if (router.query && router.query.pid) {
-      const postId = parseInt(router.query.pid.split('-').pop())
-      setPid(postId)
+    if (router.query && router.query.slug) {
+      setpostFormatId(router.query.slug[1])
     }
   })
 
   useEffect(() => {
     setSkipStatus(false)
-  }, [pid])
+  }, [postFormatId])
 
   useEffect(() => {
     const onCompleted = (data) => {
-      if (data && data.post) {
-        setPost(data.post)
+      if (data && data.postFormat) {
+        setInitialLoad(true)
+        setPostsArray(data.postFormat.posts.nodes)
       }
     }
     const onError = (error) => {
@@ -54,43 +56,44 @@ function Post ({ router }) {
     }
   }, [data])
 
+  const handleLoadMore = () => {
+    setLoadNum(loadNum + 15)
+  }
   return (
     <Layout>
-      {post ? (
-        <div className="container mx-auto py-8">
-          <div className="w-full md:w-1/2 mx-auto">
-            <div className="block mb-6">
-              <img
-                className="w-full m-0"
-                src={post.featuredImage ? post.featuredImage.sourceUrl : ''}
-                alt={post.title}
-              />
-            </div>
-            <div className="description">
-              <br></br>
-              <h2 className="text-ui-dark"><b>{post.title}</b></h2>
-              <h5>Published: {moment(post.date).format('ll')}</h5>
-              <br></br>
-              <h4><b>Categories:</b>
-                {post.categories.nodes.length
-                  ? post.categories.nodes.map((category, id) => <a href="#" key={id}>{category.name}</a>)
-                  : ''
-                }
-              </h4>
-            </div>
+      <div className="container mx-auto py-6">
+        <div className={initialLoad ? 'flex flex-wrap posts-container' : 'flex flex-wrap'} >
+          {postsArray.length
+            ? postsArray.map((post) => <Post key={`ct-pt-${post.postId}`} post={post} />)
+            : ''}
+        </div>
+
+        {!initialLoad ? (
+          <div className="load-initial">
+            <ReactLoading
+              className="load-icon"
+              type="spinningBubbles"
+              color="#333333"
+              height="60px"
+              width="60px"
+            />
           </div>
-        </div>
-      ) : (
-        <div className="load-initial">
-          <ReactLoading
-            className="load-icon"
-            type="spinningBubbles"
-            color="#333333"
-            height="60px"
-            width="60px"
-          />
-        </div>
-      )}
+        ) : (
+          <div className="load-more flex flex-wrap">
+            {loading ? (
+              <ReactLoading
+                className="load-icon"
+                type="spokes"
+                color="#333333"
+                height="40px"
+                width="40px"
+              />
+            ) : (
+              <span onClick={() => handleLoadMore()}>Load more...</span>
+            )}
+          </div>
+        )}
+      </div>
       <div className="back-btn" onClick={() => Router.back()}>
         <svg id="search-icon" className="back-icon" viewBox="0 0 24 24">
           <path d="M26.105,21.891c-0.229,0-0.439-0.131-0.529-0.346l0,0c-0.066-0.156-1.716-3.857-7.885-4.59
@@ -104,4 +107,4 @@ function Post ({ router }) {
   )
 }
 
-export default withRouter(Post)
+export default withRouter(PostFormat)
