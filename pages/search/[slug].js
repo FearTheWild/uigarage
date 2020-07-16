@@ -8,6 +8,7 @@ import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
 
 import Layout from '../../components/Layout'
+import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
 import POSTS_QUERY from '../../queries/posts'
@@ -87,6 +88,7 @@ function Search ({ router }) {
   }
   return (
     <Layout>
+      <Filter/>
       <div className="container mx-auto py-6">
         <div className={`flex flex-wrap ${initialLoad ? 'posts-container' : ''} ${empty ? 'empty-container' : ''}`} >
           { postsArray.length
