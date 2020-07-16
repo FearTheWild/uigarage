@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
 
 import Layout from '../../components/Layout'
+import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
 import POSTFORMAT_QUERY from '../../queries/postFormat'
@@ -61,6 +62,7 @@ function PostFormat ({ router }) {
   }
   return (
     <Layout>
+      <Filter/>
       <div className="container mx-auto py-6">
         <div className={initialLoad ? 'flex flex-wrap posts-container' : 'flex flex-wrap'} >
           {postsArray.length
