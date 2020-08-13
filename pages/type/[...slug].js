@@ -9,22 +9,22 @@ import Layout from '../../components/Layout'
 import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
-import COLOR_QUERY from '../../queries/color'
+import POSTFORMAT_QUERY from '../../queries/postFormat'
 
 // eslint-disable-next-line react/prop-types
-function Color ({ router }) {
+function PostFormat ({ router }) {
   const loadNum = 15
   const [endCursor, setEndCursor] = useState('')
-  const [colorId, setColorId] = useState()
+  const [postFormatId, setPostFormatId] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const [hasNextPage, setHasNextPage] = useState(true)
   const { loading, error, data } = useQuery(
-    COLOR_QUERY,
+    POSTFORMAT_QUERY,
     {
       variables: {
-        id: colorId,
+        id: postFormatId,
         endCursor: endCursor,
         count: loadNum
       },
@@ -33,22 +33,22 @@ function Color ({ router }) {
   )
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setColorId(router.query.slug[1])
+      setPostFormatId(router.query.slug[1])
     }
   })
 
   useEffect(() => {
     setSkipStatus(false)
-  }, [colorId])
+  }, [postFormatId])
 
   useEffect(() => {
     const onCompleted = (data) => {
-      if (data && data.color) {
-        const fetchData = data.color.posts.nodes
+      if (data && data.postFormat) {
+        const fetchData = data.postFormat.posts.nodes
         setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
 
-        if (!data.color.posts.pageInfo.hasNextPage) {
+        if (!data.postFormat.posts.pageInfo.hasNextPage) {
           setHasNextPage(false)
         }
       }
@@ -66,7 +66,7 @@ function Color ({ router }) {
   }, [data])
 
   const handleLoadMore = () => {
-    setEndCursor(data.color.posts.pageInfo.endCursor)
+    setEndCursor(data.postFormat.posts.pageInfo.endCursor)
   }
   return (
     <Layout>
@@ -120,4 +120,4 @@ function Color ({ router }) {
   )
 }
 
-export default withRouter(Color)
+export default withRouter(PostFormat)

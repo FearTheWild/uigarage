@@ -14,18 +14,9 @@ const FILTER_QUERY = gql`
                 uri
             }
         }
-        colors (first: 100) {
+        postFormats (first: 100) {
             nodes {
                 count
-                name
-                slug
-                description
-                uri
-                id
-            }
-        }
-        platforms (first: 100) {
-            nodes {
                 name
                 slug
                 description
