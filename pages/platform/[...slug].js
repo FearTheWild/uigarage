@@ -9,22 +9,22 @@ import Layout from '../../components/Layout'
 import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
-import CATEGORY_QUERY from '../../queries/category'
+import PLATFORM_QUERY from '../../queries/platform'
 
 // eslint-disable-next-line react/prop-types
-function Category ({ router }) {
+function Platform ({ router }) {
   const loadNum = 15
   const [endCursor, setEndCursor] = useState('')
-  const [categoryId, setCategoryId] = useState()
+  const [platformId, setPlatformId] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const [hasNextPage, setHasNextPage] = useState(true)
   const { loading, error, data } = useQuery(
-    CATEGORY_QUERY,
+    PLATFORM_QUERY,
     {
       variables: {
-        id: categoryId,
+        id: platformId,
         endCursor: endCursor,
         count: loadNum
       },
@@ -33,22 +33,22 @@ function Category ({ router }) {
   )
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setCategoryId(router.query.slug[1])
+      setPlatformId(router.query.slug[1])
     }
   })
 
   useEffect(() => {
     setSkipStatus(false)
-  }, [categoryId])
+  }, [platformId])
 
   useEffect(() => {
     const onCompleted = (data) => {
-      if (data && data.category) {
-        const fetchData = data.category.posts.nodes
+      if (data && data.platform) {
+        const fetchData = data.platform.posts.nodes
         setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
 
-        if (!data.category.posts.pageInfo.hasNextPage) {
+        if (!data.platform.posts.pageInfo.hasNextPage) {
           setHasNextPage(false)
         }
       }
@@ -66,7 +66,7 @@ function Category ({ router }) {
   }, [data])
 
   const handleLoadMore = () => {
-    setEndCursor(data.category.posts.pageInfo.endCursor)
+    setEndCursor(data.platform.posts.pageInfo.endCursor)
   }
   return (
     <Layout>
@@ -120,4 +120,4 @@ function Category ({ router }) {
   )
 }
 
-export default withRouter(Category)
+export default withRouter(Platform)

@@ -1,9 +1,9 @@
 /* eslint-disable no-tabs */
 import gql from 'graphql-tag'
 
-const FILTER_QUERY = gql`
+const COLOR_PLATFORM_QUERY = gql`
     query {
-        categories (first: 100) {
+        colors (first: 100) {
             nodes {
                 count
                 description
@@ -14,7 +14,7 @@ const FILTER_QUERY = gql`
                 uri
             }
         }
-        postFormats (first: 100) {
+        platforms (first: 100) {
             nodes {
                 count
                 name
@@ -27,4 +27,4 @@ const FILTER_QUERY = gql`
     }
 `
 
-export default FILTER_QUERY
+export default COLOR_PLATFORM_QUERY

@@ -2,13 +2,15 @@
 import gql from 'graphql-tag'
 
 const CATEGORY_QUERY = gql`
-	query Category ($id: ID!, $count: Int) {
+	query Category ($id: ID!, $endCursor: String, $count: Int) {
 		category(id: $id) {
+			id
 			link
 			name
 			slug
 			uri
-			posts (first: $count) {
+			count
+			posts (first: $count, after: $endCursor) {
 				nodes {
 					id
 					title
@@ -16,17 +18,25 @@ const CATEGORY_QUERY = gql`
 					date
 					postId
 					featuredImage {
-						id
-						uri
-						title
-						srcSet
-						sourceUrl
+						node {
+							id
+							uri
+							title
+							srcSet
+							sourceUrl
+						}
 					}
 					categories {
 						nodes {
 							name
 						}
 					}
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
 				}
 			}
 		}

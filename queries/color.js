@@ -1,12 +1,10 @@
 /* eslint-disable no-tabs */
 import gql from 'graphql-tag'
 
-const POSTFORMAT_QUERY = gql`
-	query postFormat ($id: ID!, $endCursor: String, $count: Int) {
-		postFormat(id: $id) {
+const COLOR_QUERY = gql`
+	query color ($id: ID!, $endCursor: String, $count: Int) {
+		color(id: $id) {
 			id
-			count
-			description
 			link
 			name
 			slug
@@ -45,4 +43,4 @@ const POSTFORMAT_QUERY = gql`
 	}
 `
 
-export default POSTFORMAT_QUERY
+export default COLOR_QUERY

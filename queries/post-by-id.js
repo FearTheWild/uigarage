@@ -15,11 +15,13 @@ const POST_BY_ID_QUERY = gql`
         }
     	}
       featuredImage {
-        id
-        uri
-        title
-        srcSet
-        sourceUrl
+        node {
+          id
+          uri
+          title
+          srcSet
+          sourceUrl
+        }
       }
     }
   }

@@ -13,16 +13,19 @@ import POSTFORMAT_QUERY from '../../queries/postFormat'
 
 // eslint-disable-next-line react/prop-types
 function PostFormat ({ router }) {
-  const [loadNum, setLoadNum] = useState(15)
+  const loadNum = 15
+  const [endCursor, setEndCursor] = useState('')
   const [postFormatId, setpostFormatId] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
+  const [hasNextPage, setHasNextPage] = useState(true)
   const { loading, error, data } = useQuery(
     POSTFORMAT_QUERY,
     {
       variables: {
         id: postFormatId,
+        endCursor: endCursor,
         count: loadNum
       },
       skip: skipStatus
@@ -41,8 +44,13 @@ function PostFormat ({ router }) {
   useEffect(() => {
     const onCompleted = (data) => {
       if (data && data.postFormat) {
+        const fetchData = data.postFormat.posts.nodes
+        setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
-        setPostsArray(data.postFormat.posts.nodes)
+
+        if (!data.postFormat.posts.pageInfo.hasNextPage) {
+          setHasNextPage(false)
+        }
       }
     }
     const onError = (error) => {
@@ -58,7 +66,7 @@ function PostFormat ({ router }) {
   }, [data])
 
   const handleLoadMore = () => {
-    setLoadNum(loadNum + 15)
+    setEndCursor(data.postFormat.posts.pageInfo.endCursor)
   }
   return (
     <Layout>
@@ -91,7 +99,10 @@ function PostFormat ({ router }) {
                 width="40px"
               />
             ) : (
-              <span onClick={() => handleLoadMore()}>Load more...</span>
+              hasNextPage ? (
+                <span onClick={() => handleLoadMore()}>Load more...</span>
+              )
+                : ''
             )}
           </div>
         )}
