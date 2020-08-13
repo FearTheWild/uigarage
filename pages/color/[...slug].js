@@ -12,23 +12,10 @@ import Post from '../../components/Post'
 import COLOR_QUERY from '../../queries/color'
 
 // eslint-disable-next-line react/prop-types
-<<<<<<< HEAD
 function Color ({ router }) {
   const loadNum = 15
   const [endCursor, setEndCursor] = useState('')
   const [colorId, setColorId] = useState()
-=======
-<<<<<<<< HEAD:pages/color/[...slug].js
-function color ({ router }) {
-  const [loadNum, setLoadNum] = useState(15)
-  const [colorId, setcolorId] = useState()
-========
-function PostFormat ({ router }) {
-  const loadNum = 15
-  const [endCursor, setEndCursor] = useState('')
-  const [postFormatId, setpostFormatId] = useState()
->>>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326:pages/type/[...slug].js
->>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
@@ -37,17 +24,8 @@ function PostFormat ({ router }) {
     COLOR_QUERY,
     {
       variables: {
-<<<<<<< HEAD
         id: colorId,
         endCursor: endCursor,
-=======
-<<<<<<<< HEAD:pages/color/[...slug].js
-        id: colorId,
-========
-        id: postFormatId,
-        endCursor: endCursor,
->>>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326:pages/type/[...slug].js
->>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326
         count: loadNum
       },
       skip: skipStatus
@@ -55,11 +33,7 @@ function PostFormat ({ router }) {
   )
   useEffect(() => {
     if (router.query && router.query.slug) {
-<<<<<<< HEAD
       setColorId(router.query.slug[1])
-=======
-      setcolorId(router.query.slug[1])
->>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326
     }
   })
 
@@ -69,7 +43,6 @@ function PostFormat ({ router }) {
 
   useEffect(() => {
     const onCompleted = (data) => {
-<<<<<<< HEAD
       if (data && data.color) {
         const fetchData = data.color.posts.nodes
         setPostsArray([...postsArray, ...fetchData])
@@ -78,22 +51,6 @@ function PostFormat ({ router }) {
         if (!data.color.posts.pageInfo.hasNextPage) {
           setHasNextPage(false)
         }
-=======
-<<<<<<<< HEAD:pages/color/[...slug].js
-      if (data && data.color) {
-        setInitialLoad(true)
-        setPostsArray(data.color.posts.nodes)
-========
-      if (data && data.postFormat) {
-        const fetchData = data.postFormat.posts.nodes
-        setPostsArray([...postsArray, ...fetchData])
-        setInitialLoad(true)
-
-        if (!data.postFormat.posts.pageInfo.hasNextPage) {
-          setHasNextPage(false)
-        }
->>>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326:pages/type/[...slug].js
->>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326
       }
     }
     const onError = (error) => {
@@ -109,11 +66,7 @@ function PostFormat ({ router }) {
   }, [data])
 
   const handleLoadMore = () => {
-<<<<<<< HEAD
     setEndCursor(data.color.posts.pageInfo.endCursor)
-=======
-    setEndCursor(data.postFormat.posts.pageInfo.endCursor)
->>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326
   }
   return (
     <Layout>
@@ -167,8 +120,4 @@ function PostFormat ({ router }) {
   )
 }
 
-<<<<<<< HEAD
 export default withRouter(Color)
-=======
-export default withRouter(color)
->>>>>>> b35b596ad0f64658b94c4c812ad4952af8cfd326
