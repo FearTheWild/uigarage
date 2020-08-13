@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import clientConfig from "../client-config";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
+import { useState } from 'react'
+import Link from 'next/link'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
 
 const Post = props => {
-  const { post } = props;
-  const [isAfterLoad, setAfterLoad] = useState(false);
-  const placeholder = (<div className="photo-placeholder"></div>);
+  // eslint-disable-next-line react/prop-types
+  const { post } = props
+  const [isAfterLoad, setAfterLoad] = useState(false)
+  // eslint-disable-next-line react/react-in-jsx-scope
+  const placeholder = (<div className="photo-placeholder"></div>)
   const afterLazyLoad = () => {
-    setAfterLoad(true);
+    setAfterLoad(true)
   }
 
   return undefined !== post ? (
@@ -20,7 +23,7 @@ const Post = props => {
         <a className="block mb-2">
           <LazyLoadImage
             alt={post.title}
-            src={post.featuredImage ? post.featuredImage.sourceUrl : ``}
+            src={post.featuredImage ? post.featuredImage.node.sourceUrl : ''}
             delayTime={700}
             effect="blur"
             afterLoad={afterLazyLoad}
@@ -36,12 +39,12 @@ const Post = props => {
         >
           <a className="text-base font-bold text-grey-400 hover:text-ui-dark">{post.title}</a>
         </Link>
-      ) : ""
+      ) : ''
       }
     </div>
   ) : (
-      ""
-    );
-};
+    ''
+  )
+}
 
-export default Post;
+export default Post

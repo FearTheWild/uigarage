@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
-const POSTS_QUERY = gql`
-  query Posts($id: Int, $endCursor: String) {
-    posts(first: $id, after: $endCursor) {
+const SEARCH_QUERY = gql`
+  query Posts($id: Int, $endCursor: String, $searchKey: String) {
+    posts(first: $id, after: $endCursor, where: {search: $searchKey}) {
       nodes {
         id
         title
@@ -37,4 +37,4 @@ const POSTS_QUERY = gql`
   }
 `
 
-export default POSTS_QUERY
+export default SEARCH_QUERY

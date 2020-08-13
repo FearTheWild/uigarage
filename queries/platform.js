@@ -2,33 +2,41 @@
 import gql from 'graphql-tag'
 
 const PLATFORM_QUERY = gql`
-	query platform ($id: ID!, $count: Int) {
+	query platform ($id: ID!, $endCursor: String, $count: Int) {
 		platform(id: $id) {
-            count
-            description
+			id
 			link
 			name
 			slug
 			uri
-			posts (first: $count) {
+			count
+			posts (first: $count, after: $endCursor) {
 				nodes {
 					id
 					title
 					slug
-                    date
-                    postId
+					date
+					postId
 					featuredImage {
-						id
-						uri
-						title
-						srcSet
-						sourceUrl
+						node {
+							id
+							uri
+							title
+							srcSet
+							sourceUrl
+						}
 					}
 					categories {
 						nodes {
 							name
 						}
 					}
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+					startCursor
 				}
 			}
 		}

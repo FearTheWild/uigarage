@@ -11,22 +11,24 @@ import Layout from '../../components/Layout'
 import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
-import POSTS_QUERY from '../../queries/posts'
+import SEARCH_QUERY from '../../queries/search'
 
 // eslint-disable-next-line react/prop-types
 function Search ({ router }) {
-  const [loadNum, setLoadNum] = useState(15)
+  const loadNum = 15
+  const [endCursor, setEndCursor] = useState('')
   const [searchKey, setsearchKey] = useState()
-  const [filteredPosts, setFilteredPosts] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const [empty, setEmpty] = useState(false)
   const { loading, error, data } = useQuery(
-    POSTS_QUERY,
+    SEARCH_QUERY,
     {
       variables: {
-        id: 1000
+        id: loadNum,
+        endCursor: endCursor,
+        searchKey: searchKey
       },
       skip: skipStatus
     }
@@ -44,23 +46,13 @@ function Search ({ router }) {
   useEffect(() => {
     const onCompleted = (data) => {
       if (data && data.posts) {
+        const fetchData = data.posts.nodes
+        setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
-        const posts = data.posts.nodes
-        const filteredPostsArray = posts.filter(
-          post =>
-            post.title.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1 ||
-						post.categories.nodes.some(category =>
-						  category.name.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)
-        )
-        // eslint-disable-next-line eqeqeq
-        if (filteredPostsArray.length == 0) {
+        if (!data.posts.pageInfo.hasNextPage) {
           setEmpty(true)
-        }
-        setFilteredPosts(filteredPostsArray)
-
-        if (filteredPostsArray) {
-          const loadPosts = filteredPostsArray.slice(0, loadNum)
-          setPostsArray(loadPosts)
+        } else {
+          setEmpty(false)
         }
       }
     }
@@ -77,14 +69,13 @@ function Search ({ router }) {
   }, [data])
 
   useEffect(() => {
-    if (filteredPosts) {
-      const loadPosts = filteredPosts.slice(0, loadNum)
-      setPostsArray(loadPosts)
+    if (postsArray.length === 0) {
+      setEmpty(true)
     }
-  }, [loadNum])
+  }, [postsArray])
 
   const handleLoadMore = () => {
-    setLoadNum(loadNum + 15)
+    setEndCursor(data.posts.pageInfo.endCursor)
   }
   return (
     <Layout>

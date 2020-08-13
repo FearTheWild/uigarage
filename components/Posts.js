@@ -12,16 +12,18 @@ import Post from './Post'
 
 const Posts = (props) => {
   const apolloClient = initializeApollo()
-
-  const [loadNum, setLoadNum] = useState(15)
+  const loadNum = 15
+  const [endCursor, setEndCursor] = useState('')
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
+  const [hasNextPage, setHasNextPage] = useState(true)
   const { loading, error, data } = useQuery(
     POSTS_QUERY,
     {
       variables: {
-        id: loadNum
+        id: loadNum,
+        endCursor: endCursor
       },
       skip: skipStatus
       // fetchPolicy: "cache-and-network"
@@ -32,9 +34,9 @@ const Posts = (props) => {
     setTimeout(() => {
       try {
         const cachedLoadNum = apolloClient.readQuery({ query: CachedNum_QUERY })
-        setLoadNum(cachedLoadNum.loadNum)
+        // setLoadNum(cachedLoadNum.loadNum)
       } catch (e) {
-        setLoadNum(15)
+        // setLoadNum(15)
       }
       setSkipStatus(false)
     }, 100)
@@ -44,8 +46,12 @@ const Posts = (props) => {
     const onCompleted = (data) => {
       if (data && data.posts) {
         const fetchData = data.posts.nodes
-        setPostsArray([...fetchData])
+        setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
+
+        if (!data.posts.pageInfo.hasNextPage) {
+          setHasNextPage(false)
+        }
         apolloClient.writeQuery({
           query: CachedNum_QUERY,
           data: {
@@ -67,7 +73,7 @@ const Posts = (props) => {
   }, [data])
 
   const handleLoadMore = () => {
-    setLoadNum(loadNum + 15)
+    setEndCursor(data.posts.pageInfo.endCursor)
   }
 
   if (error) {
@@ -108,7 +114,10 @@ const Posts = (props) => {
               width="40px"
             />
           ) : (
-            <span onClick={() => handleLoadMore()}>Load more...</span>
+            hasNextPage ? (
+              <span onClick={() => handleLoadMore()}>Load more...</span>
+            )
+              : ''
           )}
         </div>
       )}

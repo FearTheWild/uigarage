@@ -12,17 +12,20 @@ import Post from '../../components/Post'
 import PLATFORM_QUERY from '../../queries/platform'
 
 // eslint-disable-next-line react/prop-types
-function platform ({ router }) {
-  const [loadNum, setLoadNum] = useState(15)
-  const [platformId, setplatformId] = useState()
+function Platform ({ router }) {
+  const loadNum = 15
+  const [endCursor, setEndCursor] = useState('')
+  const [platformId, setPlatformId] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
+  const [hasNextPage, setHasNextPage] = useState(true)
   const { loading, error, data } = useQuery(
     PLATFORM_QUERY,
     {
       variables: {
         id: platformId,
+        endCursor: endCursor,
         count: loadNum
       },
       skip: skipStatus
@@ -30,7 +33,7 @@ function platform ({ router }) {
   )
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setplatformId(router.query.slug[1])
+      setPlatformId(router.query.slug[1])
     }
   })
 
@@ -41,8 +44,13 @@ function platform ({ router }) {
   useEffect(() => {
     const onCompleted = (data) => {
       if (data && data.platform) {
+        const fetchData = data.platform.posts.nodes
+        setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
-        setPostsArray(data.platform.posts.nodes)
+
+        if (!data.platform.posts.pageInfo.hasNextPage) {
+          setHasNextPage(false)
+        }
       }
     }
     const onError = (error) => {
@@ -58,7 +66,7 @@ function platform ({ router }) {
   }, [data])
 
   const handleLoadMore = () => {
-    setLoadNum(loadNum + 15)
+    setEndCursor(data.platform.posts.pageInfo.endCursor)
   }
   return (
     <Layout>
@@ -75,7 +83,7 @@ function platform ({ router }) {
             <ReactLoading
               className="load-icon"
               type="spinningBubbles"
-              platform="#333333"
+              color="#333333"
               height="60px"
               width="60px"
             />
@@ -86,12 +94,15 @@ function platform ({ router }) {
               <ReactLoading
                 className="load-icon"
                 type="spokes"
-                platform="#333333"
+                color="#333333"
                 height="40px"
                 width="40px"
               />
             ) : (
-              <span onClick={() => handleLoadMore()}>Load more...</span>
+              hasNextPage ? (
+                <span onClick={() => handleLoadMore()}>Load more...</span>
+              )
+                : ''
             )}
           </div>
         )}
@@ -109,4 +120,4 @@ function platform ({ router }) {
   )
 }
 
-export default withRouter(platform)
+export default withRouter(Platform)

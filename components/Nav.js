@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRef } from 'react'
+import HFilter from './Header-Filter'
 
 const Nav = (props) => {
   // eslint-disable-next-line no-unused-vars
@@ -34,6 +35,11 @@ const Nav = (props) => {
         </div>
         <div className="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow ">
           <div className="lg:flex lg:items-stretch lg:justify-end ml-auto">
+            <Link href="#">
+              <div className="flex lg:mr-3 items-center">
+                <HFilter />
+              </div>
+            </Link>
             <Link href="#">
               <div className="flex lg:mr-3 items-center">
                 <input type="search" ref={searchInput} onKeyDown={searchKeyPress} className="bg-purple-white shadow rounded border-0 p-3 search-input" placeholder="Search" />

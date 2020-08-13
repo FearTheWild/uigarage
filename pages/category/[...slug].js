@@ -13,16 +13,19 @@ import CATEGORY_QUERY from '../../queries/category'
 
 // eslint-disable-next-line react/prop-types
 function Category ({ router }) {
-  const [loadNum, setLoadNum] = useState(15)
+  const loadNum = 15
+  const [endCursor, setEndCursor] = useState('')
   const [categoryId, setCategoryId] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
+  const [hasNextPage, setHasNextPage] = useState(true)
   const { loading, error, data } = useQuery(
     CATEGORY_QUERY,
     {
       variables: {
         id: categoryId,
+        endCursor: endCursor,
         count: loadNum
       },
       skip: skipStatus
@@ -41,8 +44,13 @@ function Category ({ router }) {
   useEffect(() => {
     const onCompleted = (data) => {
       if (data && data.category) {
+        const fetchData = data.category.posts.nodes
+        setPostsArray([...postsArray, ...fetchData])
         setInitialLoad(true)
-        setPostsArray(data.category.posts.nodes)
+
+        if (!data.category.posts.pageInfo.hasNextPage) {
+          setHasNextPage(false)
+        }
       }
     }
     const onError = (error) => {
@@ -58,7 +66,7 @@ function Category ({ router }) {
   }, [data])
 
   const handleLoadMore = () => {
-    setLoadNum(loadNum + 15)
+    setEndCursor(data.category.posts.pageInfo.endCursor)
   }
   return (
     <Layout>
@@ -91,7 +99,10 @@ function Category ({ router }) {
                 width="40px"
               />
             ) : (
-              <span onClick={() => handleLoadMore()}>Load more...</span>
+              hasNextPage ? (
+                <span onClick={() => handleLoadMore()}>Load more...</span>
+              )
+                : ''
             )}
           </div>
         )}
