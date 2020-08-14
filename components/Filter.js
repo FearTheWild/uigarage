@@ -1,6 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable camelcase */
 import { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/react-hooks'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
@@ -16,10 +17,25 @@ const Filter = (props) => {
   const router = useRouter()
   const [categories, setCategories] = useState()
   const [postFormats, setPostFormats] = useState()
+  const [defaultCategoryVal, setDefaultCategoryVal] = useState('')
+  const [defaultPostFormatVal, setDefaultPostFormatVal] = useState('')
 
   const { loading, error, data } = useQuery(
     FILTER_QUERY
   )
+
+  useEffect(() => {
+    if (props.categoryInfo && props.categoryInfo.category) {
+      const categoryObj = props.categoryInfo.category
+      const categoryVal = { value: { uri: categoryObj.uri, id: categoryObj.id }, label: `${categoryObj.name} (${categoryObj.count})` }
+      setDefaultCategoryVal(categoryVal)
+    }
+    if (props.postFormatInfo && props.postFormatInfo.postFormat) {
+      const postFormatObj = props.postFormatInfo.postFormat
+      const postFormatVal = { value: { uri: postFormatObj.uri, id: postFormatObj.id }, label: `${postFormatObj.name} (${postFormatObj.count})` }
+      setDefaultPostFormatVal(postFormatVal)
+    }
+  }, [props])
 
   useEffect(() => {
     const onCompleted = (data) => {
@@ -57,11 +73,11 @@ const Filter = (props) => {
       <div className="flex flex-wrap mb-4">
         <div className="w-1/2 md:w-1/4 lg:w-1/4 fl-item px-3">
           <span className="text-base">Select Categories</span>
-          <MySelect options={categories} className="mt-1" onChange={handleChange} placeholder="All categories"/>
+          <MySelect options={categories} className="mt-1" onChange={handleChange} placeholder="All categories" value={defaultCategoryVal} />
         </div>
         <div className="w-1/2 md:w-1/4 lg:w-1/4 fl-item px-3">
           <span className="text-base">Posts Format</span>
-          <MySelect options={postFormats} className="mt-1" onChange={handleChange} placeholder="All postFormats"/>
+          <MySelect options={postFormats} className="mt-1" onChange={handleChange} placeholder="All postFormats" value={defaultPostFormatVal} />
         </div>
       </div>
       <hr></hr>
@@ -69,4 +85,8 @@ const Filter = (props) => {
   )
 }
 
+Filter.propTypes = {
+  categoryInfo: PropTypes.object,
+  postFormatInfo: PropTypes.object
+}
 export default Filter

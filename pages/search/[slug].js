@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import Router, { withRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
+import Masonry from 'react-masonry-css'
 
 import Layout from '../../components/Layout'
 import Filter from '../../components/Filter'
@@ -22,6 +23,7 @@ function Search ({ router }) {
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const [empty, setEmpty] = useState(false)
+  const [breakPointCols, setBreakPointCols] = useState('')
   const { loading, error, data } = useQuery(
     SEARCH_QUERY,
     {
@@ -33,6 +35,29 @@ function Search ({ router }) {
       skip: skipStatus
     }
   )
+
+  useEffect(() => {
+    window.addEventListener('resize', resizeWindow)
+    resizeWindow()
+  }, [])
+
+  function resizeWindow () {
+    const screenSize = window.innerWidth
+    let pointCols = 0
+    if (screenSize > 1200) {
+      pointCols = 5
+    } else if (screenSize < 1200 && screenSize > 992) {
+      pointCols = 4
+    } else if (screenSize < 992 && screenSize > 768) {
+      pointCols = 3
+    } else if (screenSize < 768 && screenSize > 576) {
+      pointCols = 2
+    } else if (screenSize < 576) {
+      pointCols = 1
+    }
+    setBreakPointCols(pointCols)
+  }
+
   useEffect(() => {
     if (router.query && router.query.slug) {
       setsearchKey(router.query.slug)
@@ -81,19 +106,25 @@ function Search ({ router }) {
     <Layout>
       <Filter/>
       <div className="container mx-auto py-6">
-        <div className={`flex flex-wrap ${initialLoad ? 'posts-container' : ''} ${empty ? 'empty-container' : ''}`} >
-          { postsArray.length
-            ? postsArray.map((post) => <Post key={`ct-pt-${post.postId}`} post={post} />)
-            : (
-              <div>
-                {initialLoad
-                  ? (<span>There is no search result. Please try again.</span>)
-                  : ''
-                }
-              </div>
-            )
-          }
-        </div>
+        {Number.isInteger(breakPointCols) ? (
+          <Masonry
+            breakpointCols={breakPointCols}
+            // eslint-disable-next-line react/jsx-no-duplicate-props
+            className={`my-masonry-grid ${initialLoad ? 'posts-container' : ''} ${empty ? 'empty-container' : ''}`}
+            columnClassName="my-masonry-grid_column">
+            { postsArray.length
+              ? postsArray.map((post) => <Post key={`ct-pt-${post.postId}`} post={post} />)
+              : (
+                <div>
+                  {initialLoad
+                    ? (<span>There is no search result. Please try again.</span>)
+                    : ''
+                  }
+                </div>
+              )
+            }
+          </Masonry>
+        ) : ''}
 
         {!initialLoad ? (
           <div className="load-initial">
