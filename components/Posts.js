@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { initializeApollo } from '../lib/ApolloClient'
 import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
+import Masonry from 'react-masonry-css'
 
 import POSTS_QUERY from '../queries/posts'
 import CachedNum_QUERY from '../queries/cached-num'
@@ -18,6 +19,7 @@ const Posts = (props) => {
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const [hasNextPage, setHasNextPage] = useState(true)
+  const [breakPointCols, setBreakPointCols] = useState('')
   const { loading, error, data } = useQuery(
     POSTS_QUERY,
     {
@@ -29,6 +31,28 @@ const Posts = (props) => {
       // fetchPolicy: "cache-and-network"
     }
   )
+
+  useEffect(() => {
+    window.addEventListener('resize', resizeWindow)
+    resizeWindow()
+  }, [])
+
+  function resizeWindow () {
+    const screenSize = window.innerWidth
+    let pointCols = 0
+    if (screenSize > 1200) {
+      pointCols = 5
+    } else if (screenSize < 1200 && screenSize > 992) {
+      pointCols = 4
+    } else if (screenSize < 992 && screenSize > 768) {
+      pointCols = 3
+    } else if (screenSize < 768 && screenSize > 576) {
+      pointCols = 2
+    } else if (screenSize < 576) {
+      pointCols = 1
+    }
+    setBreakPointCols(pointCols)
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -87,11 +111,16 @@ const Posts = (props) => {
   }
   return (
     <div className="container mx-auto py-6">
-      <div className={initialLoad ? 'flex flex-wrap posts-container' : 'flex flex-wrap'} >
-        {postsArray.length
-          ? postsArray.map((post) => <Post key={post.postId} post={post} />)
-          : ''}
-      </div>
+      {Number.isInteger(breakPointCols) ? (
+        <Masonry
+          breakpointCols={breakPointCols}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column">
+          {postsArray.length
+            ? postsArray.map((post) => <Post key={`ct-pt-${post.postId}`} post={post} />)
+            : ''}
+        </Masonry>
+      ) : ''}
 
       {!initialLoad ? (
         <div className="load-initial">

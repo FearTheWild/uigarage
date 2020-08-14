@@ -95,6 +95,10 @@ body {
   color: #8e8d8d
 }
 
+.h-filter>div:first-child>div:first-child>div:first-child {
+  color: #d0c7c7;
+}
+
 .search-input:focus {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
 }
@@ -143,4 +147,27 @@ body {
   transform: translate(-50%, -50%);
   fill: #211e1e;
   width: 25px;
+}
+
+.lazy-load-image-background.blur.lazy-load-image-loaded > img {
+  border-radius: 10px;
+}
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  width: auto;
+}
+.my-masonry-grid_column {
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column>div {
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.my-masonry-grid_column>div:hover {
+  transform: scale(1.05);
 }

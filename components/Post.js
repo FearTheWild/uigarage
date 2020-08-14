@@ -15,7 +15,7 @@ const Post = props => {
   }
 
   return undefined !== post ? (
-    <div className="w-1/2 md:w-1/4 lg:w-1/5 px-3 pb-8" key={post.postId}>
+    <div key={post.postId}>
       <Link
         as={`/post/${post.slug}-${post.postId}`}
         href={`/post?slug=${post.slug}-${post.postId}`}

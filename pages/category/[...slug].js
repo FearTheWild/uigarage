@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Router, { withRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import ReactLoading from 'react-loading'
+import Masonry from 'react-masonry-css'
 
 import Layout from '../../components/Layout'
 import Filter from '../../components/Filter'
@@ -20,6 +21,7 @@ function Category ({ router }) {
   const [initialLoad, setInitialLoad] = useState(false)
   const [skipStatus, setSkipStatus] = useState(true)
   const [hasNextPage, setHasNextPage] = useState(true)
+  const [breakPointCols, setBreakPointCols] = useState('')
   const { loading, error, data } = useQuery(
     CATEGORY_QUERY,
     {
@@ -31,6 +33,29 @@ function Category ({ router }) {
       skip: skipStatus
     }
   )
+
+  useEffect(() => {
+    window.addEventListener('resize', resizeWindow)
+    resizeWindow()
+  }, [])
+
+  function resizeWindow () {
+    const screenSize = window.innerWidth
+    let pointCols = 0
+    if (screenSize > 1200) {
+      pointCols = 5
+    } else if (screenSize < 1200 && screenSize > 992) {
+      pointCols = 4
+    } else if (screenSize < 992 && screenSize > 768) {
+      pointCols = 3
+    } else if (screenSize < 768 && screenSize > 576) {
+      pointCols = 2
+    } else if (screenSize < 576) {
+      pointCols = 1
+    }
+    setBreakPointCols(pointCols)
+  }
+
   useEffect(() => {
     if (router.query && router.query.slug) {
       setCategoryId(router.query.slug[1])
@@ -70,13 +95,18 @@ function Category ({ router }) {
   }
   return (
     <Layout>
-      <Filter/>
+      <Filter categoryInfo={data}/>
       <div className="container mx-auto py-6">
-        <div className={initialLoad ? 'flex flex-wrap posts-container' : 'flex flex-wrap'} >
-          {postsArray.length
-            ? postsArray.map((post) => <Post key={`ct-pt-${post.postId}`} post={post} />)
-            : ''}
-        </div>
+        {Number.isInteger(breakPointCols) ? (
+          <Masonry
+            breakpointCols={breakPointCols}
+            className="my-masonry-grid"
+            columnClassName="my-masonry-grid_column">
+            {postsArray.length
+              ? postsArray.map((post) => <Post key={`ct-pt-${post.postId}`} post={post} />)
+              : ''}
+          </Masonry>
+        ) : ''}
 
         {!initialLoad ? (
           <div className="load-initial">
