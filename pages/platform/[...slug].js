@@ -58,7 +58,7 @@ function Platform ({ router }) {
 
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setPlatformId(router.query.slug[1])
+      setPlatformId(router.query.slug[0])
     }
   })
 

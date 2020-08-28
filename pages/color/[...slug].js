@@ -57,7 +57,7 @@ function Color ({ router }) {
   }
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setColorId(router.query.slug[1])
+      setColorId(router.query.slug[0])
     }
   })
 

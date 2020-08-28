@@ -17,7 +17,9 @@ const HFilter = (props) => {
   const [colors, setcolors] = useState()
   const [platforms, setplatforms] = useState()
   const [defaultColorVal, setDefaultColorVal] = useState('')
+  const [defaultColorName, setDefaultColorName] = useState('')
   const [defaultPlatformVal, setDefaultPlatformVal] = useState('')
+  const [defaultPlatformName, setDefaultPlatformName] = useState('')
   const { loading, error, data } = useQuery(
     COLOR_PLATFORM_QUERY
   )
@@ -26,25 +28,38 @@ const HFilter = (props) => {
     const asPath = router.asPath
     const baseRouter = asPath.split('/')
     if (baseRouter[1] === 'platform') {
-      const defaultVal = { value: { uri: `/${baseRouter[1]}/${baseRouter[2]}/`, id: `${baseRouter[3]}/${baseRouter[4]}` }, label: `${baseRouter[2]} (${baseRouter[4]})` }
-      setDefaultPlatformVal(defaultVal)
+      setDefaultPlatformName(baseRouter[2])
     }
     if (baseRouter[1] === 'color') {
-      const defaultVal = { value: { uri: `/${baseRouter[1]}/${baseRouter[2]}/`, id: `${baseRouter[3]}/${baseRouter[4]}` }, label: `${baseRouter[2]} (${baseRouter[4]})` }
-      setDefaultColorVal(defaultVal)
+      setDefaultColorName(baseRouter[2])
     }
   }, [props])
 
   useEffect(() => {
     const onCompleted = (data) => {
+      const asPath = router.asPath
+      const baseRouter = asPath.split('/')
+
       if (data && data.colors && data.platforms) {
         const colors_option = [{ value: { uri: '/', id: '' }, label: 'All colors' }]
         const platforms_option = [{ value: { uri: '/', id: '' }, label: 'All platforms' }]
         data.colors.nodes.map((color) => {
-          colors_option.push({ value: { uri: color.uri, id: `${color.id}/${color.count}` }, label: `${color.name}  (${color.count})` })
+          colors_option.push({ value: { uri: color.uri, id: '' }, label: `${color.name}  (${color.count})` })
+          if (color.name.toLowerCase() === defaultColorName) {
+            if (baseRouter[1] === 'color') {
+              const defaultVal = { value: { uri: `/${baseRouter[1]}/${baseRouter[2]}/`, id: '' }, label: `${baseRouter[2]} (${color.count})` }
+              setDefaultColorVal(defaultVal)
+            }
+          }
         })
         data.platforms.nodes.map((platform) => {
-          platforms_option.push({ value: { uri: platform.uri, id: `${platform.id}/${platform.count}` }, label: `${platform.name} (${platform.count})` })
+          platforms_option.push({ value: { uri: `/platform/${platform.name}/`, id: `${platform.count}` }, label: `${platform.name} (${platform.count})` })
+          if (platform.name.toLowerCase() === defaultPlatformName.toLowerCase()) {
+            if (baseRouter[1] === 'platform') {
+              const defaultVal = { value: { uri: `/${baseRouter[1]}/${baseRouter[2]}/`, id: '' }, label: `${baseRouter[2]} (${platform.count})` }
+              setDefaultPlatformVal(defaultVal)
+            }
+          }
         })
         setcolors(colors_option)
         setplatforms(platforms_option)

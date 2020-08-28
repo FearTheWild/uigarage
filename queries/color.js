@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 
 const COLOR_QUERY = gql`
 	query color ($id: ID!, $endCursor: String, $count: Int) {
-		color(id: $id) {
+		color(id: $id, idType: NAME) {
 			id
 			link
 			name

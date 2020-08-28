@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 
 const PLATFORM_QUERY = gql`
 	query platform ($id: ID!, $endCursor: String, $count: Int) {
-		platform(id: $id) {
+		platform(id: $id, idType: NAME) {
 			id
 			link
 			name

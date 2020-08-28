@@ -27,8 +27,7 @@ function Post ({ router }) {
   )
   useEffect(() => {
     if (router.query && router.query.pid) {
-      const postId = parseInt(router.query.pid.split('-').pop())
-      setPid(postId)
+      setPid(router.query.pid)
     }
   })
 
