@@ -43,10 +43,10 @@ const Filter = (props) => {
         const categories_option = [{ value: { uri: '/', id: '' }, label: 'All categories' }]
         const postFormats_option = [{ value: { uri: '/', id: '' }, label: 'All postFormats' }]
         data.categories.nodes.map((category) => {
-          categories_option.push({ value: { uri: category.uri, id: category.id }, label: `${category.name}  (${category.count})` })
+          categories_option.push({ value: { uri: category.uri, id: '' }, label: `${category.name}  (${category.count})` })
         })
         data.postFormats.nodes.map((postFormat) => {
-          postFormats_option.push({ value: { uri: postFormat.uri, id: postFormat.id }, label: `${postFormat.name} (${postFormat.count})` })
+          postFormats_option.push({ value: { uri: postFormat.uri, id: '' }, label: `${postFormat.name} (${postFormat.count})` })
         })
         setCategories(categories_option)
         setPostFormats(postFormats_option)

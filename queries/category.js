@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 
 const CATEGORY_QUERY = gql`
 	query Category ($id: ID!, $endCursor: String, $count: Int) {
-		category(id: $id) {
+		category(id: $id, idType: SLUG) {
 			id
 			link
 			name

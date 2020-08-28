@@ -17,8 +17,8 @@ const Post = props => {
   return undefined !== post ? (
     <div key={post.postId}>
       <Link
-        as={`/post/${post.slug}-${post.postId}`}
-        href={`/post?slug=${post.slug}-${post.postId}`}
+        as={`/post/${post.slug}`}
+        href={`/post?slug=${post.slug}`}
       >
         <a className="block mb-2">
           <LazyLoadImage

@@ -58,7 +58,7 @@ function Category ({ router }) {
 
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setCategoryId(router.query.slug[1])
+      setCategoryId(router.query.slug[0])
     }
   })
 

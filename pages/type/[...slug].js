@@ -11,17 +11,31 @@ import Filter from '../../components/Filter'
 import Post from '../../components/Post'
 
 import POSTFORMAT_QUERY from '../../queries/postFormat'
+import GETPOSTFORMATID_QUERY from '../../queries/getPostFormatId'
 
 // eslint-disable-next-line react/prop-types
 function PostFormat ({ router }) {
   const loadNum = 15
   const [endCursor, setEndCursor] = useState('')
   const [postFormatId, setPostFormatId] = useState()
+  const [postFormatName, setPostFormatName] = useState()
   const [postsArray, setPostsArray] = useState([])
   const [initialLoad, setInitialLoad] = useState(false)
+  const [initialSkipStatus, setInitialSkipStatus] = useState(true)
   const [skipStatus, setSkipStatus] = useState(true)
   const [hasNextPage, setHasNextPage] = useState(true)
   const [breakPointCols, setBreakPointCols] = useState('')
+
+  const { loading: loadingIn, error: errorIn, data: dataIn } = useQuery(
+    GETPOSTFORMATID_QUERY,
+    {
+      variables: {
+        name: postFormatName
+      },
+      skip: initialSkipStatus
+    }
+  )
+
   const { loading, error, data } = useQuery(
     POSTFORMAT_QUERY,
     {
@@ -58,13 +72,36 @@ function PostFormat ({ router }) {
 
   useEffect(() => {
     if (router.query && router.query.slug) {
-      setPostFormatId(router.query.slug[1])
+      // setPostFormatId(router.query.slug[1])
+      setPostFormatName(router.query.slug[0])
     }
   })
 
   useEffect(() => {
+    setInitialSkipStatus(false)
+  }, [postFormatName])
+
+  useEffect(() => {
     setSkipStatus(false)
   }, [postFormatId])
+
+  useEffect(() => {
+    const onCompleted = (dataIn) => {
+      if (dataIn && dataIn.postFormats) {
+        setPostFormatId(dataIn.postFormats.nodes[0].id)
+      }
+    }
+    const onError = (errorIn) => {
+      return <div>{errorIn}</div>
+    }
+    if (onCompleted || onError) {
+      if (onCompleted && !loadingIn && !errorIn) {
+        onCompleted(dataIn)
+      } else if (onError && !loadingIn && errorIn) {
+        onError(errorIn)
+      }
+    }
+  }, [dataIn])
 
   useEffect(() => {
     const onCompleted = (data) => {
